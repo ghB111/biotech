@@ -1,5 +1,8 @@
 *.sam
 *.bam
+_tmp
+log*
+.vscode
 SRR22196954.fastq.gz
 tmp_tmp/*
 tmp/*
