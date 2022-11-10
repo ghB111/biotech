@@ -20,8 +20,8 @@ REFERENCE_FILE_URL = 'file://' + REFERENCE_FNAME
 SEQ_FNAME = os.path.join(INPUT_DIR, 'sequence.fastq.gz')
 SEQ_FILE_URL = 'file://' + SEQ_FNAME
 
-TEST_FNAME = os.path.join(INPUT_DIR, 'test.txt')
-TEST_FILE_URL = 'file://' + TEST_FNAME
+# TEST_FNAME = os.path.join(INPUT_DIR, 'test.txt')
+# TEST_FILE_URL = 'file://' + TEST_FNAME
 
 RES_SAM = "res.sam"
 RES_BAM = "res.bam"
@@ -116,8 +116,8 @@ def decision(job, input_to_parse : str, ref_id):
 def prepare(job: Job):
     ref_fid = job._fileStore.import_file(REFERENCE_FILE_URL)
     seq_fid = job._fileStore.import_file(SEQ_FILE_URL)
-    global TEST_ID
-    TEST_ID = job._fileStore.import_file(TEST_FILE_URL)
+    # global TEST_ID
+    # TEST_ID = job._fileStore.import_file(TEST_FILE_URL)
     return (ref_fid, seq_fid)
 
 def make_pipeline(workflow: Toil):

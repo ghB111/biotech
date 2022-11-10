@@ -1,0 +1,65 @@
+Saving graph of 7 jobs, 7 new
+Processing job 'decision' kind-decision/instance-yuxc89ed v0
+Processing job 'make_flag_stat' kind-make_flag_stat/instance-1lqy5px3 v0
+Processing job 'make_bam' kind-make_bam/instance-n_rzz91k v0
+Processing job 'do_mem' kind-do_mem/instance-yx80lhfh v0
+Processing job 'make_index' kind-make_index/instance-f1z3tdul v0
+Processing job 'make_fastqc_report' kind-make_fastqc_report/instance-qt4_91sv v0
+Processing job 'prepare' kind-prepare/instance-9yv_yhq8 v0
+Running Toil version 5.7.1-b5cae9634820d76cb6c13b2a6312895122017d54 on host DESKTOP-78BTI6V.
+Issued job 'prepare' kind-prepare/instance-9yv_yhq8 v1 with job batch system ID: 0 and cores: 1, disk: 2.0 Gi, and memory: 2.0 Gi
+1 jobs are running, 0 jobs are issued and waiting to run
+Issued job 'do_mem' kind-do_mem/instance-yx80lhfh v1 with job batch system ID: 1 and cores: 1, disk: 2.0 Gi, and memory: 2.0 Gi
+Got message from job at time 11-10-2022 23:55:41: Executing /usr/bin/env fastqc -o "/home/rbrek/workspace/biotech/output/fastqc-report" "/home/rbrek/workspace/biotech/_tmp/tmp-14326975.fastq.gz"
+Got message from job at time 11-10-2022 23:55:41: Analysis complete for tmp-14326975.fastq.gz
+
+Got message from job at time 11-10-2022 23:55:41: Made fastqc report
+Got message from job at time 11-10-2022 23:55:41: Executing /usr/bin/env bwa index /home/rbrek/workspace/biotech/_tmp/tmp-19532548.fna
+Got message from job at time 11-10-2022 23:55:41: [bwa_index] Pack FASTA... 0.02 sec
+[bwa_index] Construct BWT for the packed sequence...
+[bwa_index] 0.64 seconds elapse.
+[bwa_index] Update BWT... 0.01 sec
+[bwa_index] Pack forward-only FASTA... 0.01 sec
+[bwa_index] Construct SA from BWT and Occ... 0.31 sec
+[main] Version: 0.7.17-r1198-dirty
+[main] CMD: bwa index /home/rbrek/workspace/biotech/_tmp/tmp-19532548.fna
+[main] Real time: 1.159 sec; CPU: 0.995 sec
+
+Got message from job at time 11-10-2022 23:55:41: Indexing complete
+Issued job 'make_index' kind-prepare/instance-9yv_yhq8 v3 with job batch system ID: 2 and cores: 1, disk: 953.7 Mi, and memory: 953.7 Mi
+Got message from job at time 11-11-2022 00:04:58: doing bwa mem
+Got message from job at time 11-11-2022 00:04:58: Executing /usr/bin/env bwa mem /home/rbrek/workspace/biotech/_tmp/tmp-19532548.fna /home/rbrek/workspace/biotech/_tmp/tmp-14326975.fastq.gz > "/home/rbrek/workspace/biotech/output/res.sam"
+Got message from job at time 11-11-2022 00:04:58: 
+Got message from job at time 11-11-2022 00:04:58: making bam from sam
+Got message from job at time 11-11-2022 00:04:58: Executing /usr/bin/env samtools view --bam "/home/rbrek/workspace/biotech/output/res.sam" > "/home/rbrek/workspace/biotech/output/res.bam"
+Got message from job at time 11-11-2022 00:04:58: 
+Got message from job at time 11-11-2022 00:04:58: Doing flagstat
+Got message from job at time 11-11-2022 00:04:58: Executing /usr/bin/env samtools flagstat "/home/rbrek/workspace/biotech/output/res.bam"
+Got message from job at time 11-11-2022 00:04:58: 10537890 + 0 in total (QC-passed reads + QC-failed reads)
+10530122 + 0 primary
+0 + 0 secondary
+7768 + 0 supplementary
+0 + 0 duplicates
+0 + 0 primary duplicates
+7198491 + 0 mapped (68.31% : N/A)
+7190723 + 0 primary mapped (68.29% : N/A)
+0 + 0 paired in sequencing
+0 + 0 read1
+0 + 0 read2
+0 + 0 properly paired (N/A : N/A)
+0 + 0 with itself and mate mapped
+0 + 0 singletons (N/A : N/A)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+
+Got message from job at time 11-11-2022 00:04:58: got 68.31 percent. making decision
+Got message from job at time 11-11-2022 00:04:58: OK
+Got message from job at time 11-11-2022 00:04:58: Sorting bam
+Got message from job at time 11-11-2022 00:04:58: Executing /usr/bin/env samtools sort "/home/rbrek/workspace/biotech/output/res.bam" > "/home/rbrek/workspace/biotech/output/res.sorted.bam"
+Got message from job at time 11-11-2022 00:04:58: 
+Got message from job at time 11-11-2022 00:04:58: Colling
+Got message from job at time 11-11-2022 00:04:58: Executing /usr/bin/env freebayes -f /home/rbrek/workspace/biotech/_tmp/tmp-19532548.fna /home/rbrek/workspace/biotech/output/res.sorted.bam > "/home/rbrek/workspace/biotech/output/res.vcf"
+Got message from job at time 11-11-2022 00:04:58: 
+Got message from job at time 11-11-2022 00:04:58: END
+Finished toil run successfully.
+Successfully deleted the job store: FileJobStore(/home/rbrek/workspace/biotech/my-job-store)
