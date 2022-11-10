@@ -95,7 +95,7 @@ def colling(job, ref_id):
     job.log("Colling")
     command = f'{FREEBAYES} -f {ref_path} {bam_path} > "{destination}"'
     job.log(f'Executing {command}')
-    job.log(subprocess.check_call(command, shell=True).decode('utf-8'))
+    job.log(subprocess.check_output(command, shell=True).decode('utf-8'))
 
 def decision(job, input_to_parse : str, ref_id):
     line = filter(lambda x: "mapped" in x, input_to_parse.splitlines())
