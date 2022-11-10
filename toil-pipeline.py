@@ -102,7 +102,7 @@ def decision(job, input_to_parse : str, ref_id):
     line = list(line)[0]
     res = float(line.split()[4][1:-1])
     job.log(f"got {res} percent. making decision")
-    msg = "OK" if res < 90 else "NOT OK"
+    msg = "OK" if res > 90 else "NOT OK"
     job.log(msg)
     if msg != "OK":
         job.addChildJobFn(finish)
