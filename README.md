@@ -20,3 +20,9 @@ For toil pipeline it is expected that input folder contains `reference.fna` and 
 `python toil-pipeline.py file:my-job-store --logFile="./log.txt"`
 
 `main.bash reference.fna.gz sequence.fastq.gz`
+
+## Logs
+
+See ./log.txt for example of a log when mapping is > 90%
+
+See ./res-log.txt for example of a log when mapping is < 90%
