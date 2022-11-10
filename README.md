@@ -15,8 +15,8 @@ Downloads resources:
  - https://www.ncbi.nlm.nih.gov/assembly/GCF_000005845.2/ as reference.fna
 
 It is expected that you have bwa, fastqc, samtools on your PATH
-For toil pipeline it is expected that input folder contains `reference.fa` and `sequence.fastq.gz`
+For toil pipeline it is expected that input folder contains `reference.fna` and `sequence.fastq.gz`
 
 `python toil-pipeline.py file:my-job-store --logFile="./log.txt"`
 
-`main.bash reference.fa.gz sequence.fastq.gz`
+`main.bash reference.fna.gz sequence.fastq.gz`
