@@ -36,7 +36,7 @@ os.makedirs(TMP_DIR, exist_ok=True)
 def read_global_file_saving_ext(job, file_id, ext=".fastq.gz"):
     # temp_dir = job._fileStore.getLocalTempDir()
     def h(s):
-        return abs(hash(s)) % (10 ** 8)
+        return int(hashlib.sha1(s.encode("utf-8")).hexdigest(), 16) % (10 ** 8)
     temp_dir = TMP_DIR
     temp_file_name = "tmp-" + str(h(file_id)) + ext
     return job._fileStore.readGlobalFile(file_id, userPath=os.path.join(temp_dir, temp_file_name), mutable=True, cache=False)
@@ -54,7 +54,8 @@ def make_index(job: Job, ref_fid, memory="1G", cores=1, disk="1G"):
     ref_path = read_global_file_saving_ext(job, ref_fid, ext=".fna")
     command = f'{BWA} index {ref_path}'
     job.log(f'Executing {command}')
-    job.log(subprocess.check_output(command, shell=True).decode('utf-8'))
+    job.log(subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8'))
+    job.log("Indexing complete")
 
 def do_mem(job, ref_fid, seq_fid):
     job.log("doing bwa mem")
@@ -87,25 +88,27 @@ def sort_bam(job):
     job.log(f'Executing {command}')
     job.log(subprocess.check_output(command, shell=True).decode('utf-8'))
     
-def colling(job):
+def colling(job, ref_id):
+    destination = os.path.join(OUTPUT_DIR, "res.vcf")
+    ref_path = read_global_file_saving_ext(job, ref_id, ".fna")
+    bam_path = os.path.join(OUTPUT_DIR, RES_BAM_SORTED)
     job.log("Colling")
-    command = f'{FREEBAYES}'
+    command = f'{FREEBAYES} -f {ref_path} {bam_path} > "{destination}"'
     job.log(f'Executing {command}')
-    # TODO
-    # os.system()
+    job.log(subprocess.check_call(command, shell=True).decode('utf-8'))
 
-def decision(job, input_to_parse : str):
+def decision(job, input_to_parse : str, ref_id):
     line = filter(lambda x: "mapped" in x, input_to_parse.splitlines())
     line = list(line)[0]
     res = float(line.split()[4][1:-1])
     job.log(f"got {res} percent. making decision")
-    msg = "OK" if res > 90 else "NOT OK"
+    msg = "OK" if res < 90 else "NOT OK"
     job.log(msg)
-    if msg == "OK":
+    if msg != "OK":
         job.addChildJobFn(finish)
     else:
         sort_job = Job.wrapJobFn(sort_bam)
-        colling_job = Job.wrapJobFn(colling)
+        colling_job = Job.wrapJobFn(colling, ref_id)
         colling_job.addChildJobFn(finish)
         sort_job.addChild(colling_job)
         job.addChild(sort_job)
@@ -118,8 +121,6 @@ def prepare(job: Job):
     return (ref_fid, seq_fid)
 
 def make_pipeline(workflow: Toil):
-    # ref_fid = workflow.importFile(REFERENCE_FILE_URL)
-    # seq_fid = workflow.importFile(SEQ_FILE_URL)
     fastqc_report_out = f'{OUTPUT_DIR}/fastqc-report'
 
     main_job = None
@@ -128,11 +129,11 @@ def make_pipeline(workflow: Toil):
     ref_fid = prep_job.rv(0)
     seq_fid = prep_job.rv(1)
     fastqc_job = Job.wrapJobFn(make_fastqc_report, seq_fid, fastqc_report_out) # could be done in parallel
-    make_index_job = Job.wrapJobFn(make_index, seq_fid)
+    make_index_job = Job.wrapJobFn(make_index, ref_fid)
     do_mem_job = Job.wrapJobFn(do_mem, ref_fid, seq_fid)
     make_bam_from_sam_job = Job.wrapJobFn(make_bam)
     flag_stat_job = Job.wrapJobFn(make_flag_stat)
-    decision_job = Job.wrapJobFn(decision, flag_stat_job.rv())
+    decision_job = Job.wrapJobFn(decision, flag_stat_job.rv(), ref_fid)
 
     prep_job.addChild(fastqc_job)
     fastqc_job.addChild(make_index_job)
@@ -148,6 +149,7 @@ def make_pipeline(workflow: Toil):
         return
         workflow.export_file(fastqc_job.rv(), fastqc_report_out)
 
+    # unneeded
     # main_job.addFollowOnJobFn(save_results)
 
     return main_job
